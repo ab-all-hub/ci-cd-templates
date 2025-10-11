@@ -36,6 +36,8 @@ on:
         required: true
       ARM_TENANT_ID:
         required: true
+      TOKEN:
+        required: true
 
 jobs:
   terraform:
