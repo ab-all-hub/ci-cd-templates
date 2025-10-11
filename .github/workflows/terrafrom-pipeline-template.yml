@@ -82,12 +82,12 @@ jobs:
             $sa_rg        = "$($($bkp_config)[3].split('"')[1])"
             $sa_cont_name = "$($($bkp_config)[1].split('"')[1])"
             try {
-              $rg = Get-AzResourceGroup -Name $sa_name -ErrorAction SilentlyContinue
+              $rg = Get-AzResourceGroup -Name $sa_name
               if($null -ne $rg){
                 Write-Host "Resource Group found!"
                 Write-Host "Name: $($rg.Name)"
               }
-              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -ErrorAction SilentlyContinue
+              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
                 Write-Host "Storage Account found!"
                 Write-Host "Name: $($sa.StorageAccountName)"
