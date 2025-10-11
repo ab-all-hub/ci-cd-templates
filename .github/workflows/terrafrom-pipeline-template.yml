@@ -9,13 +9,20 @@ on:
       environment:
         required: true
         type: string
-      auto_apply:
-        required: false
-        default: false
-        type: boolean
       tf_version:
         required: true
         type: string
+      tf_init:
+        required: true
+        default: true
+        type: boolean
+      tf_plan:
+        required: true
+        default: false
+        type: boolean
+      tf_apply:
+        default: false
+        type: boolean
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -54,19 +61,22 @@ jobs:
       #   with:
       #     tf_version: "1.9.0"
 
-      # - name: Initialize Terraform
-      #   run: terraform init
-      #   working-directory: ${{ inputs.terraform_directory }}
+      - name: Initialize Terraform
+        if: ${{ inputs.tf_init == true }}
+        run: terraform init
+        working-directory: ${{ inputs.terraform_directory }}
 
-      # - name: Validate Terraform
-      #   run: terraform validate
-      #   working-directory: ${{ inputs.terraform_directory }}
+      - name: Validate Terraform
+        if: ${{ inputs.tf_init == true }}
+        run: terraform validate
+        working-directory: ${{ inputs.terraform_directory }}
 
-      # - name: Plan Terraform
-      #   run: terraform plan -out=tfplan
-      #   working-directory: ${{ inputs.terraform_directory }}
+      - name: Plan Terraform
+        if: ${{ inputs.tf_plan == true }}
+        run: terraform plan -out=tfplan
+        working-directory: ${{ inputs.terraform_directory }}
 
-      # - name: Apply Terraform
-      #   if: ${{ inputs.auto_apply == true }}
-      #   run: terraform apply -auto-approve tfplan
-      #   working-directory: ${{ inputs.terraform_directory }}
+      - name: Apply Terraform
+        if: ${{ inputs.tf_apply == true }}
+        run: terraform apply -auto-approve tfplan
+        working-directory: ${{ inputs.terraform_directory }}
