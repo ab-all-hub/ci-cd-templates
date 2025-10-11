@@ -63,11 +63,11 @@ jobs:
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
 
-      # - name: Azure Login
-      #   uses: azure/login@v2
-      #   with:
-      #     creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-      #     enable-AzPSSession: true
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          enable-AzPSSession: true
 
       - name: Validate stroage account
         uses: azure/powershell@v2
@@ -81,7 +81,12 @@ jobs:
             $sa_name      = "$($bkp_config)[0].split('"')[1]"
             $sa_rg        = "$($bkp_config)[3].split('"')[1]"
             try {
-              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -ErrorAction Stop
+              $rg = Get-AzResourceGroup -Name $sa_name -ErrorAction SilentlyContinue
+              if($null -ne $rg){
+                Write-Host "Resource Group found!"
+                Write-Host "Name: $($rg.Name)"
+              }
+              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -ErrorAction SilentlyContinue
               if($null -ne $sa){
                 Write-Host "Storage Account found!"
                 Write-Host "Name: $($sa.StorageAccountName)"
@@ -90,6 +95,16 @@ jobs:
               }
             }
             Catch {
+              Write-Host "Validate: Resource group could not be found. So, creating $sa_rg"
+              try {
+                    New-AzResourceGroup -Name $sa_rg -Location $location | Out-Null
+                    Write-Host "Resource group $sa_rg created successfully."
+                }
+                catch {
+                    Write-Host "Failed to create resource group."
+                    Write-Host "Error: $($_.Exception.Message)"
+                    exit 1
+                }
               Write-Host "Validate: Storage account could not be found. So, creating $sa_name"
                 try {
                     New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
