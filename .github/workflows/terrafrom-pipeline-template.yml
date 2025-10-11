@@ -26,6 +26,9 @@ on:
       tf_varsfile:
         required: true
         type: string
+      backend_config:
+        required: true
+        type: string
       Org: 
         required: true
         type: string
@@ -46,13 +49,12 @@ on:
         required: true
 
 jobs:
-  terraform:
-    name: Terraform Deploy (${{ inputs.environment }})
+  terraform-deployment:
+    name: terraform-deploy-(${{ inputs.environment }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-
     env:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -78,7 +80,8 @@ jobs:
 
       - name: Initialize Terraform
         if: ${{ inputs.tf_init == true }}
-        run: terraform init
+        run: |
+          terraform init -backend-config=${{ inputs.backend_config }}
         working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
 
       - name: Validate Terraform
