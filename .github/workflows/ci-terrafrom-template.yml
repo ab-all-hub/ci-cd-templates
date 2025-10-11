@@ -4,15 +4,12 @@ on:
   workflow_call:
     inputs:
       terraform_directory:
-        description: "Path to Terraform code"
         required: true
         type: string
       environment:
-        description: "Deployment environment"
         required: true
         type: string
       auto_apply:
-        description: "Whether to auto-apply Terraform plan"
         required: false
         default: false
         type: boolean
@@ -44,24 +41,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v3
+      #   with:
+      #     terraform_version: 1.8.5
+
+      - name: Use shared Terraform setup steps
+        uses: ./.github/actions/terraform-setup
         with:
-          terraform_version: 1.8.5
+          tf_version: "1.9.0"
 
-      - name: Initialize Terraform
-        run: terraform init
-        working-directory: ${{ inputs.terraform_directory }}
+      # - name: Initialize Terraform
+      #   run: terraform init
+      #   working-directory: ${{ inputs.terraform_directory }}
 
-      - name: Validate Terraform
-        run: terraform validate
-        working-directory: ${{ inputs.terraform_directory }}
+      # - name: Validate Terraform
+      #   run: terraform validate
+      #   working-directory: ${{ inputs.terraform_directory }}
 
-      - name: Plan Terraform
-        run: terraform plan -out=tfplan
-        working-directory: ${{ inputs.terraform_directory }}
+      # - name: Plan Terraform
+      #   run: terraform plan -out=tfplan
+      #   working-directory: ${{ inputs.terraform_directory }}
 
-      - name: Apply Terraform
-        if: ${{ inputs.auto_apply == true }}
-        run: terraform apply -auto-approve tfplan
-        working-directory: ${{ inputs.terraform_directory }}
+      # - name: Apply Terraform
+      #   if: ${{ inputs.auto_apply == true }}
+      #   run: terraform apply -auto-approve tfplan
+      #   working-directory: ${{ inputs.terraform_directory }}
