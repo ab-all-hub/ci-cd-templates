@@ -74,9 +74,37 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            Get-Content -Path ./dev/$env:backend_config
+            Write-Host "Validate: Get Storage account details"
+            $bkp_config   = Get-Content -Path ./dev/$env:backend_config
+            $tf_varsfile  = Get-Content -Path ./dev/$env:tf_varsfile
+            location      = "$($tf_varsfile)[1].split('"')[1]"
+            $sa_name      = "$($bkp_config)[0].split('"')[1]"
+            $sa_rg        = "$($bkp_config)[3].split('"')[1]"
+            try {
+              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -ErrorAction Stop
+              if($null -ne $sa){
+                Write-Host "Storage Account found!"
+                Write-Host "Name: $($sa.StorageAccountName)"
+                Write-Host "Location: $($sa.Location)"
+                Write-Host "Kind: $($sa.ResourceGroupName)"
+              }
+            }
+            Catch {
+              Write-Host "Validate: Storage account could not be found. So, creating $sa_name"
+                try {
+                    New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
+                    Write-Host "Storage Account $sa_name created successfully."
+                }
+                catch {
+                    Write-Host "Failed to create storage account."
+                    Write-Host "Error: $($_.Exception.Message)"
+                    exit 1
+                }
+            }
         env:
           backend_config: ${{ inputs.backend_config }}
+          tf_varsfile: ${{ inputs.tf_varsfile }}
+
 
   terraform-deployment: 
     name: terraform-deploy-(${{ inputs.environment }})
