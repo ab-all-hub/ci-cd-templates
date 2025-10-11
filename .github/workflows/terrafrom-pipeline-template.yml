@@ -80,6 +80,7 @@ jobs:
   terraform-deployment: 
     name: terraform-deploy-(${{ inputs.environment }})
     runs-on: ubuntu-latest
+    needs: [precheck]
     permissions:
       contents: read
       id-token: write
