@@ -80,6 +80,7 @@ jobs:
             location      = "$($tf_varsfile)[1].split('"')[1]"
             $sa_name      = "$($bkp_config)[0].split('"')[1]"
             $sa_rg        = "$($bkp_config)[3].split('"')[1]"
+            $sa_cont_name = "$($bkp_config)[1].split('"')[1]"
             try {
               $rg = Get-AzResourceGroup -Name $sa_name -ErrorAction SilentlyContinue
               if($null -ne $rg){
@@ -107,8 +108,10 @@ jobs:
                 }
               Write-Host "Validate: Storage account could not be found. So, creating $sa_name"
                 try {
-                    New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
+                    $storage_acc = New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2 | Out-Null
                     Write-Host "Storage Account $sa_name created successfully."
+                    New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off | Out-Null
+                    Write-Host "Blob Container $sa_cont_name created successfully."
                 }
                 catch {
                     Write-Host "Failed to create storage account."
@@ -119,7 +122,6 @@ jobs:
         env:
           backend_config: ${{ inputs.backend_config }}
           tf_varsfile: ${{ inputs.tf_varsfile }}
-
 
   terraform-deployment: 
     name: terraform-deploy-(${{ inputs.environment }})
