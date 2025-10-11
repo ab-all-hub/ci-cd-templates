@@ -110,11 +110,11 @@ jobs:
                 try {
                     $storage_acc = New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2 | Out-Null
                     Write-Host "Storage Account $sa_name created successfully."
-                    New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off | Out-Null
+                    $Context = $storage_acc.Context
+                    New-AzStorageContainer -Name $sa_cont_name -Context $Context -PublicAccess Off | Out-Null
                     Write-Host "Blob Container $sa_cont_name created successfully."
                 }
                 catch {
-                    Write-Host "Failed to create storage account."
                     Write-Host "Error: $($_.Exception.Message)"
                     exit 1
                 }
