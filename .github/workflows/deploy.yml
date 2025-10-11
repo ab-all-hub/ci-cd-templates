@@ -9,3 +9,5 @@ jobs:
     uses: ab-all-hub/ci-cd-templates/.github/workflows/terrafrom-pipeline-template.yml@main
     with:
       environment: "dev"
+      terraform_directory: "test"
+      auto_apply: false
