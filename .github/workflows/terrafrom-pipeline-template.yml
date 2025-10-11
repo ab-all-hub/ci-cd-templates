@@ -59,7 +59,11 @@ jobs:
         uses: actions/checkout@v4
         with: 
           repository: owner/terrafrom-modules
-          token: ${{ secrets.TOKEN}}
+          token: ${{ secrets.TOKEN }}
+      
+      - name: Configure Git for private modules
+        run: |
+          git config --global url."https://${{ secrets.TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
       
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
