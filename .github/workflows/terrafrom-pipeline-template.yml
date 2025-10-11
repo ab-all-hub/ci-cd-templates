@@ -57,7 +57,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with: 
-          repository: ab-all-hub/terraform-modules
+          repository: ab-all-hub/ci-cd-templates
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
 
