@@ -59,6 +59,7 @@ jobs:
         with: 
           repository: ab-all-hub/terraform-modules
           token: ${{ secrets.TOKEN }}
+          persist-credentials: false
 
       - name: Configure Git for private modules
         run: |
