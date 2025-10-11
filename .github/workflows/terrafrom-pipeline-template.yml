@@ -36,6 +36,8 @@ on:
         required: true
       ARM_TENANT_ID:
         required: true
+      TOKEN:
+        required: true
 
 jobs:
   terraform:
@@ -54,6 +56,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Configure Git for private module access
+        run: |
+          git config --global url."https://${TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
