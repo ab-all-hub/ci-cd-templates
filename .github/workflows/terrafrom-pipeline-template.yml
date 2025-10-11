@@ -63,19 +63,18 @@ jobs:
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-          enable-AzPSSession: true
+      # - name: Azure Login
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+      #     enable-AzPSSession: true
 
       - name: Run Azure PowerShell commands
         uses: azure/powershell@v2
         with:
           azPSVersion: latest
           inlineScript: |
-            echo "Running Azure PowerShell commands..."
-            Get-AzContext
+            Write-Output (Get-Content ${{ inputs.backend_config }})[0]
 
   terraform-deployment: 
     name: terraform-deploy-(${{ inputs.environment }})
