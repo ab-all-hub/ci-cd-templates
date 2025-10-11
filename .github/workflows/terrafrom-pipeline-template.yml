@@ -69,12 +69,15 @@ jobs:
       #     creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
       #     enable-AzPSSession: true
 
-      - name: Run Azure PowerShell commands
+      - name: Validate stroage account
         uses: azure/powershell@v2
         with:
           azPSVersion: latest
           inlineScript: |
-            Write-Output (Get-Content ${{ inputs.backend_config }})[0]
+            $bkp_config = Get-Content $env:backend_config
+            Write-Output "$bkp_config[0]"
+        env:
+          backend_config: ${{ inputs.backend_config }}
 
   terraform-deployment: 
     name: terraform-deploy-(${{ inputs.environment }})
