@@ -23,6 +23,10 @@ on:
       tf_apply:
         default: false
         type: boolean
+      tf_varsfile:
+        required: true
+        type: string
+
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -56,11 +60,6 @@ jobs:
         with:
           terraform_version: ${{ inputs.tf_version }}
 
-      # - name: Use shared Terraform setup steps
-      #   uses: ./.github/actions/terraform-setup
-      #   with:
-      #     tf_version: "1.9.0"
-
       - name: Initialize Terraform
         if: ${{ inputs.tf_init == true }}
         run: terraform init
@@ -73,7 +72,7 @@ jobs:
 
       - name: Plan Terraform
         if: ${{ inputs.tf_plan == true }}
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan --var-file=${{ inputs.tf_varsfile }}
         working-directory: ${{ inputs.terraform_directory }}
 
       - name: Apply Terraform
