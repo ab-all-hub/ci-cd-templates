@@ -110,7 +110,7 @@ jobs:
                 try {
                     $storage_acc = New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2 | Out-Null
                     Write-Host "Storage Account $sa_name created successfully."
-                    $Context = $storage_acc.Context
+                    $Context = Set-AzCurrentStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
                     New-AzStorageContainer -Name $sa_cont_name -Context $Context -PublicAccess Off | Out-Null
                     Write-Host "Blob Container $sa_cont_name created successfully."
                 }
