@@ -77,10 +77,10 @@ jobs:
             Write-Host "Validate: Get Storage account details"
             $bkp_config   = Get-Content -Path ./dev/$env:backend_config
             $tf_varsfile  = Get-Content -Path ./dev/$env:tf_varsfile
-            location      = "$($tf_varsfile)[1].split('"')[1]"
-            $sa_name      = "$($bkp_config)[0].split('"')[1]"
-            $sa_rg        = "$($bkp_config)[3].split('"')[1]"
-            $sa_cont_name = "$($bkp_config)[1].split('"')[1]"
+            location      = "$($($tf_varsfile)[1].split('"')[1])"
+            $sa_name      = "$($($bkp_config)[0].split('"')[1])"
+            $sa_rg        = "$($($bkp_config)[3].split('"')[1])"
+            $sa_cont_name = "$($($bkp_config)[1].split('"')[1])"
             try {
               $rg = Get-AzResourceGroup -Name $sa_name -ErrorAction SilentlyContinue
               if($null -ne $rg){
