@@ -26,6 +26,12 @@ on:
       tf_varsfile:
         required: true
         type: string
+      Org: 
+        required: true
+        type: string
+      repo: 
+        required: true
+        type: string
 
     secrets:
       ARM_CLIENT_ID:
@@ -57,7 +63,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with: 
-          repository: ab-all-hub/ci-cd-templates
+          repository: ${{ inputs.org }}/${{ inputs.repo }}
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
 
