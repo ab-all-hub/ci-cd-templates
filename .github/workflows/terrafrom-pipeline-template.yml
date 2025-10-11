@@ -73,19 +73,19 @@ jobs:
       - name: Initialize Terraform
         if: ${{ inputs.tf_init == true }}
         run: terraform init
-        working-directory: ${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
 
       - name: Validate Terraform
         if: ${{ inputs.tf_init == true }}
         run: terraform validate
-        working-directory: ${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
 
       - name: Plan Terraform
         if: ${{ inputs.tf_plan == true }}
         run: terraform plan -out=tfplan --var-file=${{ inputs.tf_varsfile }}
-        working-directory: ${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
 
       - name: Apply Terraform
         if: ${{ inputs.tf_apply == true }}
         run: terraform apply -auto-approve tfplan
-        working-directory: ${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
