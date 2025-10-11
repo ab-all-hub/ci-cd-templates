@@ -13,6 +13,9 @@ on:
         required: false
         default: false
         type: boolean
+      tf_version:
+        required: true
+        type: string
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -41,15 +44,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v3
-      #   with:
-      #     terraform_version: 1.8.5
-
-      - name: Use shared Terraform setup steps
-        uses: ./.github/actions/terraform-setup
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
-          tf_version: "1.9.0"
+          terraform_version: ${{ inputs.tf_version }}
+
+      # - name: Use shared Terraform setup steps
+      #   uses: ./.github/actions/terraform-setup
+      #   with:
+      #     tf_version: "1.9.0"
 
       # - name: Initialize Terraform
       #   run: terraform init
