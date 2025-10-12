@@ -129,7 +129,7 @@ jobs:
                     }
                     $storage_acc = New-AzStorageAccount @sa_param -AllowBlobPublicAccess $false 
                     Write-Host "Storage Account $sa_name created successfully."
-                    New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off | Out-Null
+                    New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off
                     Write-Host "Blob Container $sa_cont_name created successfully."
                 }
                 catch {
