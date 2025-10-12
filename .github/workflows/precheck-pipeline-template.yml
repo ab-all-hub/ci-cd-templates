@@ -33,7 +33,7 @@ on:
 
 jobs:
   validation:
-    name: validation-(${{ inputs.environment }})
+    name: ${{ inputs.environment }}-Validation
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -50,7 +50,7 @@ on:
 
 jobs:
   terraform: 
-    name: deployment-(${{ inputs.environment }})
+    name: ${{ inputs.environment }}-deployment
     runs-on: ubuntu-latest
     permissions:
       contents: read
