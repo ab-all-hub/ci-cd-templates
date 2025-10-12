@@ -58,13 +58,14 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     steps:
-      - name: Checkout code
+      - name: checkout-template-repo
         uses: actions/checkout@v4
 
-      - name: Checkout code
+      - name: checkout-deploy-repo
         uses: actions/checkout@v4
         with: 
           repository: ${{ inputs.org }}/${{ inputs.repo }}
+          path: deploy
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
 
@@ -80,7 +81,7 @@ jobs:
       - name: Initialize Terraform
         if: ${{ inputs.tf_init == true }}
         run: |
-          terraform init -backend-config=${{ inputs.backend_config }}
+          terraform init -backend-config=deploy/${{ inputs.environment }}/${{ inputs.backend_config }}
         working-directory: ${{ github.workspace }}/${{ inputs.environment}}
 
       - name: Validate Terraform
@@ -90,7 +91,7 @@ jobs:
 
       - name: Plan Terraform
         if: ${{ inputs.tf_plan == true }}
-        run: terraform plan -out=tfplan --var-file=${{ inputs.tf_varsfile }}
+        run: terraform plan -out=tfplan --var-file=deploy/${{ inputs.environment }}/${{ inputs.tf_varsfile }}
         working-directory: ${{ github.workspace }}/${{ inputs.environment}}
 
       - name: Apply Terraform
