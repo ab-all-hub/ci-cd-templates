@@ -32,7 +32,7 @@ on:
         required: true
 
 jobs:
-  precheck:
+  validation:
     name: precheck-(${{ inputs.environment }})
     runs-on: ubuntu-latest
     permissions:
