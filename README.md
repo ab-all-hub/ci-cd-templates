@@ -98,12 +98,12 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
-:::info
+
 **Notes:**
   - Ensure the backend configuration file and variables file paths are correct relative to the Terraform directory.
   -	This workflow supports both public and private repositories for Terraform modules.
   -	Conditional execution of Terraform commands allows flexible CI/CD pipelines.
-:::
+
 ## Contact
 For any questions or feedback, reach out to:
 Anand Babu P Email: anbu143dude@gmail.com
