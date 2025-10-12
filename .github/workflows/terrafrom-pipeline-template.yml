@@ -49,83 +49,9 @@ on:
         required: true
 
 jobs:
-  precheck:
-    name: precheck-(${{ inputs.environment }})
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with: 
-          repository: ${{ inputs.org }}/${{ inputs.repo }}
-          token: ${{ secrets.TOKEN }}
-          persist-credentials: false
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-          enable-AzPSSession: true
-
-      - name: Validate stroage account
-        uses: azure/powershell@v2
-        with:
-          azPSVersion: latest
-          inlineScript: |
-            Write-Host "Validate: Get Storage account details"
-            $bkp_config   = Get-Content -Path ./dev/$env:backend_config
-            $tf_varsfile  = Get-Content -Path ./dev/$env:tf_varsfile
-            $location      = "$($($tf_varsfile)[1].split('"')[1])"
-            $sa_name      = "$($($bkp_config)[0].split('"')[1])"
-            $sa_rg        = "$($($bkp_config)[3].split('"')[1])"
-            $sa_cont_name = "$($($bkp_config)[1].split('"')[1])"
-            try {
-              $rg = Get-AzResourceGroup -Name $sa_name
-              if($null -ne $rg){
-                Write-Host "Resource Group found!"
-                Write-Host "Name: $($rg.Name)"
-              }
-              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
-              if($null -ne $sa){
-                Write-Host "Storage Account found!"
-                Write-Host "Name: $($sa.StorageAccountName)"
-                Write-Host "Location: $($sa.Location)"
-                Write-Host "Kind: $($sa.ResourceGroupName)"
-              }
-            }
-            Catch {
-              Write-Host "Validate: Resource group could not be found. So, creating $sa_rg"
-              try {
-                    New-AzResourceGroup -Name $sa_rg -Location $location | Out-Null
-                    Write-Host "Resource group $sa_rg created successfully."
-                }
-                catch {
-                    Write-Host "Failed to create resource group."
-                    Write-Host "Error: $($_.Exception.Message)"
-                    exit 1
-                }
-              Write-Host "Validate: Storage account could not be found. So, creating $sa_name"
-                try {
-                    $storage_acc = New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
-                    Write-Host "Storage Account $sa_name created successfully."
-                    New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off | Out-Null
-                    Write-Host "Blob Container $sa_cont_name created successfully."
-                }
-                catch {
-                    Write-Host "Error: $($_.Exception.Message)"
-                    exit 1
-                }
-            }
-        env:
-          backend_config: ${{ inputs.backend_config }}
-          tf_varsfile: ${{ inputs.tf_varsfile }}
-
   terraform-deployment: 
     name: terraform-deploy-(${{ inputs.environment }})
     runs-on: ubuntu-latest
-    needs: [precheck]
     permissions:
       contents: read
       id-token: write
