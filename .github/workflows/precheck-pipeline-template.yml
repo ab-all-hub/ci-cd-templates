@@ -110,10 +110,7 @@ jobs:
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
-                Write-Host "Storage Account found!"
-                Write-Host "Name: $($sa.StorageAccountName)"
-                Write-Host "Location: $($sa.Location)"
-                Write-Host "Kind: $($sa.ResourceGroupName)"
+                Write-Host "Storage Account found! : Name: $($sa.StorageAccountName) Location: $($sa.Location) $($sa.ResourceGroupName)""
               }
             }
             Catch {
