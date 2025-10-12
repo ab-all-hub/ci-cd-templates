@@ -3,9 +3,6 @@ name: terraform-pipeline-template
 on:
   workflow_call:
     inputs:
-      terraform_directory:
-        required: true
-        type: string
       environment:
         required: true
         type: string
@@ -63,9 +60,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with: 
-          repository: ab-all-hub/ci-cd-templates
-          
+
       - name: Checkout code
         uses: actions/checkout@v4
         with: 
@@ -86,19 +81,19 @@ jobs:
         if: ${{ inputs.tf_init == true }}
         run: |
           terraform init -backend-config=${{ inputs.backend_config }}
-        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
 
       - name: Validate Terraform
         if: ${{ inputs.tf_init == true }}
         run: terraform validate
-        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
 
       - name: Plan Terraform
         if: ${{ inputs.tf_plan == true }}
         run: terraform plan -out=tfplan --var-file=${{ inputs.tf_varsfile }}
-        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
 
       - name: Apply Terraform
         if: ${{ inputs.tf_apply == true }}
         run: terraform apply -auto-approve tfplan
-        working-directory: ${{ github.workspace }}/${{ inputs.terraform_directory }}
+        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
