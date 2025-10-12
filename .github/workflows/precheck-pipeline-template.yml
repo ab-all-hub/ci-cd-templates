@@ -61,21 +61,21 @@ jobs:
             Write-Host "Validate: Set variable"
             $bkp_config     = Get-Content -Path ./dev/$env:backend_config
             $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
-            Write-Host "location = $($($tf_varsfile)[1].split('"')[1])" >> $env:GITHUB_OUTPUT
-            Write-Host "sa_name = $($($bkp_config)[0].split('"')[1])" >> $env:GITHUB_OUTPUT
-            Write-Host "sa_rg = $($($bkp_config)[3].split('"')[1])" >> $env:GITHUB_OUTPUT
-            Write-Host "sa_cont_name = $($($bkp_config)[1].split('"')[1])" >> $env:GITHUB_OUTPUT
+            Write-Host "location = $($tf_varsfile)[1].split('"')[1]" >> $env:GITHUB_OUTPUT
+            Write-Host "sa_name = $($bkp_config)[0].split('"')[1]" >> $env:GITHUB_OUTPUT
+            Write-Host "sa_rg = $($bkp_config)[3].split('"')[1]" >> $env:GITHUB_OUTPUT
+            Write-Host "sa_cont_name = $($bkp_config)[1].split('"')[1]" >> $env:GITHUB_OUTPUT
         env:
           backend_config: ${{ inputs.backend_config }}
           tf_varsfile: ${{ inputs.tf_varsfile }}
       
       - name: Validate management resource group
-        id: rg
         if: success()
         uses: azure/powershell@v2
         with:
           azPSVersion: latest
           inlineScript: |
+            Write-Host "RG Name: ${{ steps.variables.outputs.sa_rg }}"
             $sa_rg      = ${{ steps.variables.outputs.sa_rg }}
             $location   = ${{ steps.variables.outputs.location }}
             try {
@@ -97,7 +97,6 @@ jobs:
             }
                 
       - name: Validate storage account
-        id: sa
         if: success()
         uses: azure/powershell@v2
         with:
