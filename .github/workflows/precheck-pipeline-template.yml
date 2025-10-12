@@ -64,7 +64,7 @@ jobs:
             try {
               $rg = Get-AzResourceGroup -Name $sa_rg
               if($null -ne $rg){
-                Write-Host "validate: Resource Group found! : $($rg.Name)"
+                Write-Host "validate: Resource Group found! : $sa_rg"
               }
             }
             Catch {
