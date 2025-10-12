@@ -106,10 +106,10 @@ jobs:
                     $sa_param = @{
                         ResourceGroupName   = $sa_rg
                         Name                = $sa_name
-                        SkuName             = Standard_LRS
+                        SkuName             = "Standard_LRS"
                         Location            = $location
-                        Kind                = StorageV2
-                        MinimumTlsVersion   = TLS1_2
+                        Kind                = "StorageV2"
+                        MinimumTlsVersion   = "TLS1_2"
                     }
                     $storage_acc = New-AzStorageAccount @sa_param -AllowBlobPublicAccess $false 
                     Write-Host "Storage Account $sa_name created successfully."
