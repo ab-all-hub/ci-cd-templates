@@ -61,10 +61,10 @@ jobs:
             Write-Host "Validate: Set variable"
             $bkp_config     = Get-Content -Path ./dev/$env:backend_config
             $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
-            $location       = $($tf_varsfile)[1].split('"')[1]
-            $sa_name        = $($bkp_config)[0].split('"')[1]
-            $sa_rg          = $($bkp_config)[3].split('"')[1]
-            $sa_cont_name   = $($bkp_config)[1].split('"')[1]
+            $location       = $(($tf_varsfile)[1].split('"')[1])
+            $sa_name        = $(($bkp_config)[0].split('"')[1])
+            $sa_rg          = $(($bkp_config)[3].split('"')[1])
+            $sa_cont_name   = $(($bkp_config)[1].split('"')[1])
             Write-Host "location = $location" >> $env:GITHUB_OUTPUT
             Write-Host "sa_name = $sa_name" >> $env:GITHUB_OUTPUT
             Write-Host "sa_rg = $sa_rg" >> $env:GITHUB_OUTPUT
@@ -113,7 +113,7 @@ jobs:
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
-                Write-Host "Storage Account found! : Name: $($sa.StorageAccountName) Location: $($sa.Location) $($sa.ResourceGroupName)""
+                Write-Host "Storage Account found! : Name: $($sa.StorageAccountName) Location: $($sa.Location) $($sa.ResourceGroupName)"
               }
             }
             Catch {
