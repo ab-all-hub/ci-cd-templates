@@ -64,6 +64,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with: 
+          repository: ab-all-hub/ci-cd-templates
+          
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with: 
           repository: ${{ inputs.org }}/${{ inputs.repo }}
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
