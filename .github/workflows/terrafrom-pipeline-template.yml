@@ -49,8 +49,8 @@ on:
         required: true
 
 jobs:
-  terraform-deployment: 
-    name: terraform-deploy-(${{ inputs.environment }})
+  terraform: 
+    name: deployment-(${{ inputs.environment }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
