@@ -52,30 +52,36 @@ jobs:
           creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
           enable-AzPSSession: true
 
-      - name: Validate stroage account
+      - name: Set Variables
+        id: variables
         uses: azure/powershell@v2
         with:
           azPSVersion: latest
           inlineScript: |
-            Write-Host "Validate: Get Storage account details"
-            $bkp_config   = Get-Content -Path ./dev/$env:backend_config
-            $tf_varsfile  = Get-Content -Path ./dev/$env:tf_varsfile
-            $location      = "$($($tf_varsfile)[1].split('"')[1])"
-            $sa_name      = "$($($bkp_config)[0].split('"')[1])"
-            $sa_rg        = "$($($bkp_config)[3].split('"')[1])"
-            $sa_cont_name = "$($($bkp_config)[1].split('"')[1])"
+            Write-Host "Validate: Set variable"
+            $bkp_config     = Get-Content -Path ./dev/$env:backend_config
+            $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
+            Write-Host "location = $($($tf_varsfile)[1].split('"')[1])" >> $env:GITHUB_OUTPUT
+            Write-Host "sa_name = $($($bkp_config)[0].split('"')[1])" >> $env:GITHUB_OUTPUT
+            Write-Host "sa_rg = $($($bkp_config)[3].split('"')[1])" >> $env:GITHUB_OUTPUT
+            Write-Host "sa_cont_name = $($($bkp_config)[1].split('"')[1])" >> $env:GITHUB_OUTPUT
+        env:
+          backend_config: ${{ inputs.backend_config }}
+          tf_varsfile: ${{ inputs.tf_varsfile }}
+      
+      - name: Validate management resource group
+        id: rg
+        if: success()
+        uses: azure/powershell@v2
+        with:
+          azPSVersion: latest
+          inlineScript: |
+            $sa_rg      = ${{ steps.variables.outputs.sa_rg }}
+            $location   = ${{ steps.variables.outputs.location }}
             try {
-              $rg = Get-AzResourceGroup -Name $sa_name
+              $rg = Get-AzResourceGroup -Name $sa_rg
               if($null -ne $rg){
-                Write-Host "Resource Group found!"
-                Write-Host "Name: $($rg.Name)"
-              }
-              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
-              if($null -ne $sa){
-                Write-Host "Storage Account found!"
-                Write-Host "Name: $($sa.StorageAccountName)"
-                Write-Host "Location: $($sa.Location)"
-                Write-Host "Kind: $($sa.ResourceGroupName)"
+                Write-Host "validate: Resource Group found! : $($rg.Name)"
               }
             }
             Catch {
@@ -85,13 +91,43 @@ jobs:
                     Write-Host "Resource group $sa_rg created successfully."
                 }
                 catch {
-                    Write-Host "Failed to create resource group."
                     Write-Host "Error: $($_.Exception.Message)"
                     exit 1
                 }
+            }
+                
+      - name: Validate storage account
+        id: sa
+        if: success()
+        uses: azure/powershell@v2
+        with:
+          azPSVersion: latest
+          inlineScript: |
+            $sa_name        = ${{ steps.variables.outputs.sa_name }}
+            $sa_rg          = ${{ steps.variables.outputs.sa_rg }}
+            $location       = ${{ steps.variables.outputs.location }}
+            $sa_cont_name   = ${{ steps.variables.outputs.sa_cont_name }}
+            try {
+              $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
+              if($null -ne $sa){
+                Write-Host "Storage Account found!"
+                Write-Host "Name: $($sa.StorageAccountName)"
+                Write-Host "Location: $($sa.Location)"
+                Write-Host "Kind: $($sa.ResourceGroupName)"
+              }
+            }
+            Catch {
               Write-Host "Validate: Storage account could not be found. So, creating $sa_name"
                 try {
-                    $storage_acc = New-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name -SkuName Standard_LRS -Location $location -Kind StorageV2 -AllowBlobPublicAccess $false -MinimumTlsVersion TLS1_2
+                    $sa_param = @{
+                        ResourceGroupName   = $sa_rg
+                        Name                = $sa_name
+                        SkuName             = Standard_LRS
+                        Location            = $location
+                        Kind                = StorageV2
+                        MinimumTlsVersion   = TLS1_2
+                    }
+                    $storage_acc = New-AzStorageAccount @sa_param -AllowBlobPublicAccess $false 
                     Write-Host "Storage Account $sa_name created successfully."
                     New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off | Out-Null
                     Write-Host "Blob Container $sa_cont_name created successfully."
@@ -101,6 +137,3 @@ jobs:
                     exit 1
                 }
             }
-        env:
-          backend_config: ${{ inputs.backend_config }}
-          tf_varsfile: ${{ inputs.tf_varsfile }}
