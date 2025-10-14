@@ -57,12 +57,8 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            $bkp_config     = Get-Content -Path ./dev/$env:backend_config
-            $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
-
-            Write-Output "bkp = $bkp_config"
-            Write-Output "input = $tf_varsfile"
-
+            $bkp_config     = Get-Content -Path ./dev/$env:backend_config | ConvertFrom-Json
+            $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile | Convertfrom-Json
             $location       = $tf_varsfile.resource_group.location
             $sa_rg          = $bkp_config.storage_account_name
             try {
@@ -92,8 +88,8 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            $bkp_config     = Get-Content -Path ./dev/$env:backend_config
-            $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
+            $bkp_config     = Get-Content -Path ./dev/$env:backend_config | ConvertFrom-Json
+            $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile | ConvertFrom-Json
             $location       = $tf_varsfile.resource_group.location
             $sa_name        = $bkp_config.storage_account_name
             $sa_rg          = $bkp_config.resource_group_name
