@@ -61,8 +61,8 @@ jobs:
             $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
 
             Write-Output "bkp = $bkp_config"
-            Write-Ouput "inpit = $tf_varsfile"
-            
+            Write-Output "input = $tf_varsfile"
+
             $location       = $tf_varsfile.resource_group.location
             $sa_rg          = $bkp_config.storage_account_name
             try {
