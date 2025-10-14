@@ -46,11 +46,11 @@ jobs:
           token: ${{ secrets.TOKEN }}
           persist-credentials: false
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
-          enable-AzPSSession: true
+      # - name: Azure Login
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+      #     enable-AzPSSession: true
 
       - name: Validate management resource group
         uses: azure/powershell@v2
@@ -59,6 +59,10 @@ jobs:
           inlineScript: |
             $bkp_config     = Get-Content -Path ./dev/$env:backend_config
             $tf_varsfile    = Get-Content -Path ./dev/$env:tf_varsfile
+
+            Write-Output "bkp = $bkp_config"
+            Write-Ouput "inpit = $tf_varsfile"
+            
             $location       = $tf_varsfile.resource_group.location
             $sa_rg          = $bkp_config.storage_account_name
             try {
