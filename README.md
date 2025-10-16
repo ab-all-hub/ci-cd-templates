@@ -1,9 +1,10 @@
 # Terraform Pipeline Template
-
+![Precheck Pipeline](https://img.shields.io/badge/workflow-terraform--pipeline-blue)
 ![Terraform Pipeline](https://img.shields.io/badge/workflow-terraform--pipeline-blue)
 
-**Author:** Anand Babu P </b>
-**Email:** anbu143dude@gmail.com
+| Project | Environment | Pipeline Name | Author |
+| :----: | :----: | :----: | :----:|
+| CI-CD Template | DEV/TEST/PROD | Azure Resource Deployment |  **Anand Babu P**<br>Senior Technical Leader \| [anbu143dude@gmail.com](mailto:anbu143dude@gmail.com)|
 
 ## Overview
 
@@ -15,7 +16,7 @@ This GitHub Actions workflow is a reusable Terraform pipeline template designed 
 It can be called from other workflows using workflow_call.
 
 ## Workflow Name
-
+precheck-pipeline-template
 terraform-pipeline-template
 
 ## Trigger
@@ -27,8 +28,8 @@ This workflow is triggered using workflow_call, allowing other workflows to call
 
 Input | Required | Type | Default | Description
 ------|-----------|-------|---------|-------------
-terraform_directory	| Yes	| string	| -	| Directory containing Terraform configuration.
 environment	| Yes	| string	| -	| Target environment (e.g., dev, qa, prod).
+runner  | Yes | string | ubuntu-latest | Target runner nam
 tf_version	| Yes	| string	| -	| Terraform version to use.
 tf_init	| Yes	| boolean	| true | Whether to run terraform init.
 tf_plan	| Yes	| boolean	| false	| Whether to run terraform plan.
@@ -39,7 +40,6 @@ Org	| Yes	| string	| -	| GitHub organization name for repository.
 repo	| Yes	| string	| -	| Repository name containing Terraform code.
 
 ## Secrets
-
 The following secrets must be provided when calling this workflow:
 
 Secret | Required	| Description
@@ -48,10 +48,10 @@ ARM_CLIENT_ID	| Yes	| Azure Service Principal client ID.
 ARM_CLIENT_SECRET	| Yes	| Azure Service Principal client secret.
 ARM_SUBSCRIPTION_ID	| Yes	| Azure subscription ID.
 ARM_TENANT_ID	| Yes	| Azure tenant ID.
-TOKEN	| Yes	| GitHub token with read access for private repositories.
+MODULE_TOKEN	| Yes | GitHub Personal Access Token for private module template repo
+DEPLOY_TOKEN  | Yes | GitHUb Personal Access Token for private deployment repo
 
 ## Jobs
-
 1. Precheck
 	-	Checks out the Terraform repository.
 	-	Logs in to Azure using provided Service Principal credentials.
@@ -70,33 +70,55 @@ TOKEN	| Yes	| GitHub token with read access for private repositories.
 ## Example Usage
 
 ```yaml
-name: Deploy Terraform
-
+name: deployment-pipeline-template
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  call-template:
-    uses: your-org/your-repo/.github/workflows/terraform-pipeline-template.yml@main
-    with:
-      terraform_directory: "dev"
-      environment: "dev"
-      tf_version: "1.7.6"
-      tf_init: true
-      tf_plan: true
-      tf_apply: false
-      tf_varsfile: "dev/dev.tfvars"
-      backend_config: "dev/backend.tfvars"
-      Org: "your-org"
-      repo: "terraform-repo"
+  precheck:
+    uses: ab-all-hub/ci-cd-templates/.github/workflows/precheck-pipeline-template.yml@main
+    permissions:
+      id-token: write
+      contents: read
     secrets:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+    with:
+      environment: "dev"
+      runner: "ubuntu-latest"
+      tf_varsfile: "input.tfvars.json"
+      backend_config: "backend-config.tfvars.json"
+      Org: "anbu143dude"
+      repo: "deployment-template"
+
+  terraform:
+    needs: [precheck]
+    uses: ab-all-hub/ci-cd-templates/.github/workflows/terrafrom-pipeline-template.yml@main
+    permissions:
+      id-token: write
+      contents: read
+    secrets:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      MODULE_TOKEN: ${{ secrets.MODULE_TOKEN }}
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+    with:
+      environment: "dev"
+      runner: "ubuntu-latest"
+      tf_version: "1.8.5"
+      tf_init: true
+      tf_plan: true
+      tf_apply: false
+      tf_varsfile: "input.tfvars.json"
+      backend_config: "backend-config.tfvars.json"
+      Org: "anbu143dude"
+      repo: "deployment-template"
 ```
 
 ## Repository Structure
