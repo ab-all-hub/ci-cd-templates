@@ -43,8 +43,8 @@ on:
         required: true
       ARM_TENANT_ID:
         required: true
-      MODULE_TOKEN:
-        required: true
+      # MODULE_TOKEN:
+      #   required: true
       DEPLOY_TOKEN:
         required: true
 
