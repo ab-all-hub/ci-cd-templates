@@ -84,7 +84,7 @@ jobs:
         if: ${{ inputs.tf_init == true }}
         working-directory: templates/azure/terraform
         run: |
-          terraform init -backend-config=./deploy/${{ inputs.environment}}/${{ inputs.backend_config }}
+          terraform init -backend-config=deploy/${{ inputs.environment }}/${{ inputs.backend_config }}
           
       - name: Validate Terraform
         if: ${{ inputs.tf_init == true }}
@@ -96,7 +96,7 @@ jobs:
         if: ${{ inputs.tf_plan == true }}
         working-directory: templates/azure/terraform
         run: |
-          terraform plan -out=tfplan --var-file=./deploy/${{ inputs.environment}}/${{ inputs.tf_varsfile }}
+          terraform plan -out=tfplan --var-file=deploy/${{ inputs.environment }}/${{ inputs.tf_varsfile }}
         
       - name: Apply Terraform
         if: ${{ inputs.tf_apply == true }}
