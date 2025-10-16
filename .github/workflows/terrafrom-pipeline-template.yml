@@ -75,10 +75,6 @@ jobs:
           token: ${{ secrets.DEPLOY_TOKEN }}
           path: deploy
 
-      - name: Configure Git for private modules
-        run: |
-          git config --global url."https://${{ secrets.TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
