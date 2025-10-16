@@ -66,6 +66,15 @@ jobs:
         with: 
           repository: ab-all-hub/terrafrom-modules
           token: ${{ secrets.MODULE_TOKEN }}
+          path: modules
+          persist-credentials: false
+      
+      - name: checkout-ci-cd-repo
+        uses: actions/checkout@v4
+        with: 
+          repository: ab-all-hub/ci-cd-templates
+          token: ${{ secrets.MODULE_TOKEN }}
+          path: templates
           persist-credentials: false
 
       - name: checkout-deploy-repo
@@ -73,6 +82,7 @@ jobs:
         with: 
           repository: ${{ inputs.org }}/${{ inputs.repo }}
           token: ${{ secrets.DEPLOY_TOKEN }}
+          path: deploy
           persist-credentials: false
 
       - name: Configure Git for private modules
@@ -86,21 +96,20 @@ jobs:
 
       - name: Initialize Terraform
         if: ${{ inputs.tf_init == true }}
-        run: |
-          terraform init -backend-config=${{ inputs.backend_config }}
-        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
-
+        working-directory: templates/terraform
+        run: terraform init -backend-config=../../deploy/${{ inputs.environment}}/${{ inputs.backend_config }}
+          
       - name: Validate Terraform
         if: ${{ inputs.tf_init == true }}
+        working-directory: templates/terraform
         run: terraform validate
-        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
-
+        
       - name: Plan Terraform
         if: ${{ inputs.tf_plan == true }}
+        working-directory: templates/terraform
         run: terraform plan -out=tfplan --var-file=${{ inputs.tf_varsfile }}
-        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
-
+        
       - name: Apply Terraform
         if: ${{ inputs.tf_apply == true }}
+        working-directory: templates/terraform
         run: terraform apply -auto-approve tfplan
-        working-directory: ${{ github.workspace }}/${{ inputs.environment}}
