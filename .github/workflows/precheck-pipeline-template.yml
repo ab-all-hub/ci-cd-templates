@@ -6,6 +6,9 @@ on:
       environment:
         required: true
         type: string
+      runner:
+        required: true
+        type: string
       tf_varsfile:
         required: true
         type: string
@@ -18,7 +21,6 @@ on:
       repo: 
         required: true
         type: string
-
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -34,7 +36,7 @@ on:
 jobs:
   validation:
     name: ${{ inputs.environment }}-validation
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     permissions:
       contents: read
       id-token: write
