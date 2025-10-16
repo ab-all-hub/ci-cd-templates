@@ -67,7 +67,6 @@ jobs:
           repository: ab-all-hub/terrafrom-modules
           token: ${{ secrets.MODULE_TOKEN }}
           path: modules
-          persist-credentials: false
       
       - name: checkout-ci-cd-repo
         uses: actions/checkout@v4
@@ -75,7 +74,6 @@ jobs:
           repository: ab-all-hub/ci-cd-templates
           token: ${{ secrets.MODULE_TOKEN }}
           path: templates
-          persist-credentials: false
 
       - name: checkout-deploy-repo
         uses: actions/checkout@v4
@@ -83,7 +81,6 @@ jobs:
           repository: ${{ inputs.org }}/${{ inputs.repo }}
           token: ${{ secrets.DEPLOY_TOKEN }}
           path: deploy
-          persist-credentials: false
 
       - name: Configure Git for private modules
         run: |
