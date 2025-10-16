@@ -61,13 +61,6 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     steps:
-      - name: checkout-module-repo
-        uses: actions/checkout@v4
-        with: 
-          repository: ab-all-hub/terrafrom-modules
-          token: ${{ secrets.MODULE_TOKEN }}
-          path: modules
-      
       - name: checkout-ci-cd-repo
         uses: actions/checkout@v4
         with: 
