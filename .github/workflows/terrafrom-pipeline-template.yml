@@ -82,9 +82,8 @@ jobs:
 
       - name: Initialize Terraform
         if: ${{ inputs.tf_init == true }}
-        working-directory: templates/azure/terraform
+        #working-directory: templates/azure/terraform
         run: |
-          cd ./
           ls
           #terraform init -backend-config=../../deploy/${{ inputs.environment}}/${{ inputs.backend_config }}
           
