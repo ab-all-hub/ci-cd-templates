@@ -104,7 +104,7 @@ jobs:
       - name: Plan Terraform
         if: ${{ inputs.tf_plan == true }}
         working-directory: templates/terraform
-        run: terraform plan -out=tfplan --var-file=${{ inputs.tf_varsfile }}
+        run: terraform plan -out=tfplan --var-file=../../deploy/${{ inputs.environment}}/${{ inputs.tf_varsfile }}
         
       - name: Apply Terraform
         if: ${{ inputs.tf_apply == true }}
