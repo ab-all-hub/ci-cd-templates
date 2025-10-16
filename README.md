@@ -99,6 +99,19 @@ jobs:
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+## Repository Structure
+```bash
+.
+├── .github/
+│   ├── workflows/
+│   │   ├── precheck-pipeline-template.yml      # GitHub Actions workflow template
+│   │   └── terraform-pipeline-template.yml     # GitHub Actions workflow template
+├── terraform/
+│   ├── main.tf                          # Reusable terraform module configuration
+│   ├── variables.tf                     # Input variables definitions
+│   └── providers.tf                     # Provider and authentication setup
+```
+
 **Notes:**
   - Ensure the backend configuration file and variables file paths are correct relative to the Terraform directory.
   -	This workflow supports both public and private repositories for Terraform modules.
