@@ -11,7 +11,7 @@ module "vnet" {
     location            = module.rg.rg_location[0]
     resource_group_name = module.rg.rg_name[0]
     virtual_network     = var.virtual_network
-    tags            = var.tags
+    tags                = var.tags
 }
 
 module "lb" {
