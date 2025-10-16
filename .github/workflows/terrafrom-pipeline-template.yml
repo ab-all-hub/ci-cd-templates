@@ -66,13 +66,6 @@ jobs:
         with: 
           repository: ab-all-hub/terraform-modules
           token: ${{ secrets.MODULE_TOKEN }}
-          path: module
-
-      - name: checkout-ci-cd-repo
-        uses: actions/checkout@v4
-        with: 
-          repository: ab-all-hub/ci-cd-templates
-          token: ${{ secrets.MODULE_TOKEN }}
           path: templates
 
       - name: checkout-deploy-repo
