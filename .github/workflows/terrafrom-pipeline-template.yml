@@ -84,7 +84,7 @@ jobs:
         if: ${{ inputs.tf_init == true }}
         #working-directory: templates/azure/terraform
         run: |
-          cd deploy
+          cd deploy/dev
           ls
           #terraform init -backend-config=./deploy/${{ inputs.environment}}/${{ inputs.backend_config }}
           
