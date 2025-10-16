@@ -1,12 +1,10 @@
 module "rg" {
-    #source          = "git::https://github.com/ab-all-hub/terraform-modules.git//azure/resource_group?ref=main"
     source          = "../../module/azure/resource_group"
     resource_group  = var.resource_group
     tags            = var.tags
 }
 
 module "vnet" {
-    # source              = "git::https://github.com/ab-all-hub/terraform-modules.git//azure/virtual_network?ref=main"
     source              = "../../module/azure/resource_group"
     location            = module.rg.rg_location[0]
     resource_group_name = module.rg.rg_name[0]
@@ -15,7 +13,6 @@ module "vnet" {
 }
 
 module "lb" {
-    # source              = "git::https://github.com/ab-all-hub/terraform-modules.git//azure/load_balancer_private?ref=main"
     source              = "../../module/azure/resource_group"
     location            = module.rg.rg_location[0]
     resource_group_name = module.rg.rg_name[0]
@@ -31,7 +28,6 @@ module "lb" {
 }
 
 module "vm" {
-    # source              = "git::https://github.com/ab-all-hub/terraform-modules.git//azure/virtual_machine?ref=main"
     source              = "../../module/azure/resource_group"
     location            = module.rg.rg_location[0]
     resource_group_name = module.rg.rg_name[0]
