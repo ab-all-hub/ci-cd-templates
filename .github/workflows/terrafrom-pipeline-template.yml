@@ -43,7 +43,9 @@ on:
         required: true
       ARM_TENANT_ID:
         required: true
-      TOKEN:
+      MODULE_TOKEN:
+        required: true
+      DEPLOY_TOKEN:
         required: true
 
 jobs:
@@ -59,11 +61,18 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     steps:
+      - name: checkout-module-repo
+        uses: actions/checkout@v4
+        with: 
+          repository: ab-all-hub/terrafrom-modules
+          token: ${{ secrets.MODULE_TOKEN }}
+          persist-credentials: false
+
       - name: checkout-deploy-repo
         uses: actions/checkout@v4
         with: 
           repository: ${{ inputs.org }}/${{ inputs.repo }}
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.DEPLOY_TOKEN }}
           persist-credentials: false
 
       - name: Configure Git for private modules
