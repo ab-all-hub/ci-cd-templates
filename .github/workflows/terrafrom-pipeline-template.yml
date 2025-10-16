@@ -61,7 +61,7 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
     steps:
-      - name: checkout-ci-cd-repo
+      - name: checkout-module-repo
         uses: actions/checkout@v4
         with: 
           repository: ab-all-hub/terraform-modules
