@@ -84,7 +84,11 @@ jobs:
         if: ${{ inputs.tf_init == true }}
         working-directory: templates/azure/terraform
         run: |
-          terraform init -backend-config=../../deploy/${{ inputs.environment }}/${{ inputs.backend_config }}
+          echo "path 1"
+          ls -la ../../../deploy/${{ inputs.environment }}/
+          eacho "path 2"
+          ls -la ../../../../deploy/${{ inputs.environment }}/
+          #terraform init -backend-config=../../../deploy/${{ inputs.environment }}/${{ inputs.backend_config }}
           
       - name: Validate Terraform
         if: ${{ inputs.tf_init == true }}
