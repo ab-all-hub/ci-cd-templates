@@ -84,7 +84,7 @@ jobs:
         env:
           backend_config: ${{ inputs.backend_config }}
           tf_varsfile: ${{ inputs.tf_varsfile }}
-          ARM_SUBSCRIPTION_ID: ${{ inputs.ARM_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
                 
       - name: Validate storage account
         if: success()
@@ -129,4 +129,4 @@ jobs:
         env:
           backend_config: ${{ inputs.backend_config }}
           tf_varsfile: ${{ inputs.tf_varsfile }}
-          ARM_SUBSCRIPTION_ID: ${{ inputs.ARM_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
