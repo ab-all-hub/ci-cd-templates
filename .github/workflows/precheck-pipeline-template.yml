@@ -103,6 +103,12 @@ jobs:
             $sa_name        = ($bkp_config | select-string "storage_account_name").line.split('"')[1]
             $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
             $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
+            $expected = "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+            $actual   = (Get-AzContext).Subscription.Id
+
+            if ($expected -ne $actual) {
+              throw "Subscription mismatch! Expected: $expected | Actual: $actual"
+            }
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
@@ -120,7 +126,6 @@ jobs:
                         Kind                = "StorageV2"
                         MinimumTlsVersion   = "TLS1_2"
                     }
-                    Set-AzContext -SubscriptionId "$env:ARM_SUBSCRIPTION_ID"
                     $storage_acc = New-AzStorageAccount @sa_param -AllowBlobPublicAccess $false 
                     Write-Host "Storage Account $sa_name created successfully."
                     New-AzStorageContainer -Name $sa_cont_name -Context $storage_acc.Context -PublicAccess Off
