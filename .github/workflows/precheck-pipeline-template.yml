@@ -59,10 +59,10 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            $bkp_config     = Get-Content -Path "./dev/$env:backend_config" -Raw | ConvertFrom-Json
-            $tf_varsfile    = Get-Content -Path "./dev/$env:tf_varsfile" -Raw | Convertfrom-Json
-            $location       = $tf_varsfile.resource_group[0].location
-            $sa_rg          = $bkp_config.resource_group_name
+            $bkp_config     = Get-Content -Path "./dev/$env:backend_config"
+            $tf_varsfile    = Get-Content -Path "./dev/$env:tf_varsfile"
+            $location       = ($tf_varsfile | select-string "location").line.split('"')[1]
+            $sa_rg          = ($bkp_config | select-string "resource_group_name")line.split('"')[1]
             try {
               $rg = Get-AzResourceGroup -Name $sa_rg
               if($null -ne $rg){
@@ -90,12 +90,12 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            $bkp_config     = Get-Content -Path "./dev/$env:backend_config" -Raw | ConvertFrom-Json
-            $tf_varsfile    = Get-Content -Path "./dev/$env:tf_varsfile" -Raw | ConvertFrom-Json
-            $location       = $tf_varsfile.resource_group[0].location
-            $sa_name        = $bkp_config.storage_account_name
-            $sa_rg          = $bkp_config.resource_group_name
-            $sa_cont_name   = $bkp_config.container_name
+            $bkp_config     = Get-Content -Path "./dev/$env:backend_config"
+            $tf_varsfile    = Get-Content -Path "./dev/$env:tf_varsfile"
+            $location       = ($tf_varsfile | select-string "location").line.split('"')[1]
+            $sa_name        = ($bkp_config | select-string "storage_account_name").line.split('"')[1]
+            $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
+            $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
