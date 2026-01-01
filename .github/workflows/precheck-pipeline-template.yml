@@ -51,7 +51,13 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+          creds: |
+            {
+              "clientId":"${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}",
+              "subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}",
+              "tenantId":"${{ secrets.ARM_TENANT_ID }}"
+            }
           enable-AzPSSession: true
 
       - name: Validate management resource group
@@ -98,7 +104,7 @@ jobs:
             $sa_name        = ($bkp_config | select-string "storage_account_name").line.split('"')[1]
             $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
             $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
-            Set-AzContext -SubscriptionId "$env:ARM_SUBSCRIPTION_ID"
+            Get-AzContext
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
