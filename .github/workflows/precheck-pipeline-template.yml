@@ -63,7 +63,7 @@ jobs:
             $tf_varsfile    = Get-Content -Path "./dev/$env:tf_varsfile"
             $location       = ($tf_varsfile | select-string "location").line.split('"')[1]
             $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
-            Set-AzContext -SubscriptionId $env:ARM_SUBSCRIPTION_ID
+            Set-AzContext -SubscriptionId "$env:ARM_SUBSCRIPTION_ID"
             try {
               $rg = Get-AzResourceGroup -Name $sa_rg
               if($null -ne $rg){
@@ -98,7 +98,7 @@ jobs:
             $sa_name        = ($bkp_config | select-string "storage_account_name").line.split('"')[1]
             $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
             $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
-            Set-AzContext -SubscriptionId $env:ARM_SUBSCRIPTION_ID
+            Set-AzContext -SubscriptionId "$env:ARM_SUBSCRIPTION_ID"
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
