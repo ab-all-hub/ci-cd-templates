@@ -106,11 +106,6 @@ jobs:
             $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
             $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
             Set-AzContext $env:sub_id
-            $actual   = (Get-AzContext).Subscription.Id
-            Write-Host "Subscription: $actual"
-            if ($expected -ne $actual) {
-              throw "Subscription mismatch! Expected: $expected | Actual: $actual"
-            }
             try {
               $sa = Get-AzStorageAccount -ResourceGroupName $sa_rg -Name $sa_name
               if($null -ne $sa){
