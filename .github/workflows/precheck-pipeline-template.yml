@@ -21,6 +21,9 @@ on:
       repo: 
         required: true
         type: string
+      sub_id: 
+        required: true
+        type: string
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -89,7 +92,6 @@ jobs:
         env:
           backend_config: ${{ inputs.backend_config }}
           tf_varsfile: ${{ inputs.tf_varsfile }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
                 
       - name: Validate storage account
         if: success()
@@ -103,7 +105,7 @@ jobs:
             $sa_name        = ($bkp_config | select-string "storage_account_name").line.split('"')[1]
             $sa_rg          = ($bkp_config | select-string "resource_group_name").line.split('"')[1]
             $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
-            $expected = "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+            Set-AzContext $env:sub_id
             $actual   = (Get-AzContext).Subscription.Id
             Write-Host "Subscription: $actual"
             if ($expected -ne $actual) {
@@ -139,4 +141,4 @@ jobs:
         env:
           backend_config: ${{ inputs.backend_config }}
           tf_varsfile: ${{ inputs.tf_varsfile }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          sub_id: ${{ inputs.sub_id }}
