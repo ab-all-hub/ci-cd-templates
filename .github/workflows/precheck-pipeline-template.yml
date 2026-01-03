@@ -105,7 +105,7 @@ jobs:
             $sa_cont_name   = ($bkp_config | select-string "container_name").line.split('"')[1]
             $expected = "${{ secrets.ARM_SUBSCRIPTION_ID }}"
             $actual   = (Get-AzContext).Subscription.Id
-
+            Write-Host "Subscription: $actual"
             if ($expected -ne $actual) {
               throw "Subscription mismatch! Expected: $expected | Actual: $actual"
             }
