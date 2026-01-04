@@ -37,20 +37,16 @@ jobs:
       contents: read
       id-token: write
     steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
       - name: checkout-module-repo
         uses: actions/checkout@v4
         with: 
           repository: ab-all-hub/azure-automation
           token: ${{ secrets.MODULE_TOKEN }}
           path: templates
-      
-      - name: checkout-deploy-repo
-        uses: actions/checkout@v4
-        with: 
-          repository: ${{ inputs.org }}/${{ inputs.repo }}
-          token: ${{ secrets.DEPLOY_TOKEN }}
-          path: deploy
-          
+
       - name: Azure Login
         uses: azure/login@v2
         with:
