@@ -1,0 +1,74 @@
+name: EnableDiagnosticsSettings-pipeline-template
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      runner:
+        required: true
+        type: string
+      Org: 
+        required: true
+        type: string
+      repo: 
+        required: true
+        type: string
+    secrets:
+      ARM_CLIENT_ID:
+        required: true
+      ARM_CLIENT_SECRET:
+        required: true
+      ARM_SUBSCRIPTION_ID:
+        required: true
+      ARM_TENANT_ID:
+        required: true
+      MODULE_TOKEN:
+        required: true
+      DEPLOY_TOKEN:
+        required: true
+
+jobs:
+  validation:
+    name: ${{ inputs.environment }}-validation
+    runs-on: ${{ inputs.runner }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: checkout-module-repo
+        uses: actions/checkout@v4
+        with: 
+          repository: ab-all-hub/terraform-modules
+          token: ${{ secrets.MODULE_TOKEN }}
+          path: templates
+
+      - name: checkout-deploy-repo
+        uses: actions/checkout@v4
+        with: 
+          repository: ${{ inputs.org }}/${{ inputs.repo }}
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: deploy
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: |
+            {
+              "clientId":"${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}",
+              "subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}",
+              "tenantId":"${{ secrets.ARM_TENANT_ID }}"
+            }
+          enable-AzPSSession: true
+
+      - name: Validate management resource group
+        uses: azure/powershell@v2
+        with:
+          azPSVersion: latest
+          inlineScript: |
+            
+        env:
+          backend_config: ${{ inputs.backend_config }}
+          tf_varsfile: ${{ inputs.tf_varsfile }}
