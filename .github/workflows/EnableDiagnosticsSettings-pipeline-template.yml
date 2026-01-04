@@ -40,16 +40,9 @@ jobs:
       - name: checkout-module-repo
         uses: actions/checkout@v4
         with: 
-          repository: ab-all-hub/terraform-modules
+          repository: ab-all-hub/azure-automation
           token: ${{ secrets.MODULE_TOKEN }}
           path: templates
-
-      - name: checkout-deploy-repo
-        uses: actions/checkout@v4
-        with: 
-          repository: ${{ inputs.org }}/${{ inputs.repo }}
-          token: ${{ secrets.DEPLOY_TOKEN }}
-          path: deploy
 
       - name: Azure Login
         uses: azure/login@v2
@@ -68,7 +61,5 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            
-        env:
-          backend_config: ${{ inputs.backend_config }}
-          tf_varsfile: ${{ inputs.tf_varsfile }}
+            Import-Module azure/modules/Backup/EnableDiagnosticsSettingsModule.psm1
+            Get-Module Enable-AzRecoveryVaultDiagnostics
