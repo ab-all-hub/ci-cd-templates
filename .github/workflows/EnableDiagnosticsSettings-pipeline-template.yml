@@ -61,9 +61,8 @@ jobs:
 
       - name: Update Diagnostics Settings
         uses: azure/powershell@v2
-        working-directory: templates
         with:
           azPSVersion: latest
           inlineScript: |
-            Import-Module ../azure/modules/Backup/EnableDiagnosticsSettingsModule.psm1
+            Import-Module templates/azure/modules/Backup/EnableDiagnosticsSettingsModule.psm1
             Get-Module Enable-AzRecoveryVaultDiagnostics
