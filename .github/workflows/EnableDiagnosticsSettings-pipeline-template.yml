@@ -63,7 +63,7 @@ jobs:
             }
           enable-AzPSSession: true
 
-      - name: Validate management resource group
+      - name: Update Diagnostics Settings
         uses: azure/powershell@v2
         with:
           azPSVersion: latest
