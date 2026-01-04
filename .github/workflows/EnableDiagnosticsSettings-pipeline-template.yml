@@ -64,5 +64,6 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            Import-Module ../templates/azure/modules/Backup/EnableDiagnosticsSettingsModule.psm1
-            Get-Module Enable-AzRecoveryVaultDiagnostics
+            ls
+            #Import-Module ../templates/azure/modules/Backup/EnableDiagnosticsSettingsModule.psm1
+            #Get-Module Enable-AzRecoveryVaultDiagnostics
