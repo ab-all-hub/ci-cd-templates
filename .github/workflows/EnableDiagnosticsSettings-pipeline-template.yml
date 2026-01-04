@@ -43,7 +43,14 @@ jobs:
           repository: ab-all-hub/azure-automation
           token: ${{ secrets.MODULE_TOKEN }}
           path: templates
-
+      
+      - name: checkout-deploy-repo
+        uses: actions/checkout@v4
+        with: 
+          repository: ${{ inputs.org }}/${{ inputs.repo }}
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: deploy
+          
       - name: Azure Login
         uses: azure/login@v2
         with:
