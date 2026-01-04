@@ -15,6 +15,12 @@ on:
       repo: 
         required: true
         type: string
+      LogAnalyticsWorkspaceId: 
+        required: true
+        type: string
+      DiagnosticSettingName:
+        required: true
+        type: string
     secrets:
       ARM_CLIENT_ID:
         required: true
@@ -47,17 +53,17 @@ jobs:
           token: ${{ secrets.MODULE_TOKEN }}
           path: templates
 
-      # - name: Azure Login
-      #   uses: azure/login@v2
-      #   with:
-      #     creds: |
-      #       {
-      #         "clientId":"${{ secrets.ARM_CLIENT_ID }}",
-      #         "clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}",
-      #         "subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}",
-      #         "tenantId":"${{ secrets.ARM_TENANT_ID }}"
-      #       }
-      #     enable-AzPSSession: true
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: |
+            {
+              "clientId":"${{ secrets.ARM_CLIENT_ID }}",
+              "clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}",
+              "subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}",
+              "tenantId":"${{ secrets.ARM_TENANT_ID }}"
+            }
+          enable-AzPSSession: true
 
       - name: Update Diagnostics Settings
         uses: azure/powershell@v2
@@ -66,4 +72,20 @@ jobs:
           inlineScript: |
             Import-Module ./templates/azure/modules/Backup/EnableDiagnosticsSettingsModule.psm1
             Import-Module ./templates/azure/modules/Backup/EnableDiagnosticsSettingsModule.psd1
-            Enable-AzRecoveryVaultDiagnostics
+            $vault_id_query = "
+            resources
+            | where type == 'microsoft.recoveryservices/vaults'
+            | extend
+                VaultId = id,
+                SubscriptionId = subscriptionId
+            | project
+                SubscriptionId,
+                VaultId
+            "
+            Install-Module Az.ResourceGraph -Repository PSGallery -Scope CurrentUser -Force
+            Search-AzGraph -Query $vault_id_query | Foreach-Object {
+                Enable-AzRecoveryVaultDiagnostics -SubscriptionId $_.SubscriptionId -VaultId $_.VaultId -LogAnalyticsWorkspaceId $env:LogAnalyticsWorkspaceId -DiagnosticSettingName $env:DiagnosticSettingName
+            }
+        env:
+          LogAnalyticsWorkspaceId: ${{ inputs.LogAnalyticsWorkspaceId }}
+          DiagnosticSettingName: ${{ inputs.DiagnosticSettingName }}
