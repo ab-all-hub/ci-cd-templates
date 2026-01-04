@@ -30,7 +30,7 @@ on:
         required: true
       ARM_TENANT_ID:
         required: true
-      DEPLOY_TOKEN:
+      MODULE_TOKEN:
         required: true
 
 jobs:
