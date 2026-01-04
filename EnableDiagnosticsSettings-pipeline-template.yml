@@ -30,7 +30,7 @@ on:
         required: true
 
 jobs:
-  validation:
+  enable-diagnostics-setings:
     name: ${{ inputs.environment }}-validation
     runs-on: ${{ inputs.runner }}
     permissions:
